@@ -1,8 +1,13 @@
 package com.example.mal;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 public class step0_repl {
 
@@ -24,24 +29,27 @@ public class step0_repl {
         return PRINT(EVAL(READ(input)));
     }
 
-    public static void LOOP() {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(System.in))) {
-            while (true) {
-                System.out.print(PROMPT);
-                final String line = r.readLine();
-                if (null == line) {
-                    System.out.println();
-                    System.exit(0);
-                }
-                System.out.println(rep(line));
-            }
+    public static void LOOP() throws IOException {
+        final Terminal terminal = TerminalBuilder.terminal();
+        final LineReader reader = LineReaderBuilder.builder()
+                                                   .terminal(terminal)
+                                                   .build();
 
-        } catch (final IOException ex) {
-            System.err.print(ex.toString());
+        while (true) {
+            try {
+                final String line = reader.readLine(PROMPT);
+                final String output = rep(line);
+                terminal.writer()
+                        .println(output);
+            } catch (UserInterruptException e) {
+                System.exit(1);
+            } catch (EndOfFileException e) {
+                System.exit(0);
+            }
         }
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         LOOP();
     }
 }
