@@ -3,10 +3,12 @@ package com.example.mal;
 import java.util.function.Function;
 
 import com.example.mal.types.MalBoolean;
+import com.example.mal.types.MalDefBang;
 import com.example.mal.types.MalDeref;
 import com.example.mal.types.MalError;
 import com.example.mal.types.MalInteger;
 import com.example.mal.types.MalKeyword;
+import com.example.mal.types.MalLetStar;
 import com.example.mal.types.MalList;
 import com.example.mal.types.MalMap;
 import com.example.mal.types.MalMetadata;
@@ -50,6 +52,11 @@ public class reader {
                              MalDeref::read),
                     Tuple.of(MalMetadata::matches,
                              MalMetadata::read),
+                    // Special forms
+                    Tuple.of(MalLetStar::matches,
+                             MalLetStar::read),
+                    Tuple.of(MalDefBang::matches,
+                             MalDefBang::read),
                     // Atoms
                     Tuple.of(MalNil::matches,
                              MalNil::read),

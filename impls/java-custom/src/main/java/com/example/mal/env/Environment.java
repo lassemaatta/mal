@@ -7,4 +7,6 @@ import io.vavr.control.Option;
 
 public interface Environment {
     Option<MalType> lookupValue(MalSymbol symbol);
+
+    Environment set(MalSymbol symbol, MalType value);
 }

@@ -3,12 +3,14 @@ package com.example.mal.types;
 import java.util.function.Function;
 
 import com.example.mal.Reader;
+import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
 import org.immutables.vavr.encodings.VavrEncodingEnabled;
 
+import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -33,7 +35,31 @@ public abstract class MalList extends MalCollection<List<MalType>> {
     }
 
     @Override
+    public Tuple2<Environment, MalType> rootEval(final Environment env) {
+        if (entries().headOption()
+                     .map(head -> Singletons.DEF_BANG == head)
+                     .getOrElse(false)) {
+            return MalDefBang.evalDefBang(this,
+                                          env);
+        }
+        return Tuple.of(env,
+                        eval(env));
+    }
+
+    @Override
     public MalType eval(final Environment env) {
+        if (entries().isEmpty()) {
+            return this;
+        }
+        if (Singletons.LET_STAR == entries().head()) {
+            return MalLetStar.evalLetStar(this,
+                                          env);
+        }
+        // Just a normal IFn invocation
+        return evalList(env);
+    }
+
+    private MalType evalList(final Environment env) {
         if (entries().isEmpty()) {
             return this;
         }

@@ -28,4 +28,9 @@ public class RootEnv implements Environment {
     public Option<MalType> lookupValue(final MalSymbol symbol) {
         return ENV.get(symbol);
     }
+
+    @Override
+    public Environment set(MalSymbol symbol, MalType value) {
+        throw new IllegalStateException();
+    }
 }

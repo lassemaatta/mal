@@ -4,6 +4,8 @@ package com.example.mal;
 import com.example.mal.types.ImmutableMalContinue;
 import com.example.mal.types.MalBoolean;
 import com.example.mal.types.MalContinue;
+import com.example.mal.types.MalDefBang;
+import com.example.mal.types.MalLetStar;
 import com.example.mal.types.MalNil;
 import com.example.mal.types.MalSymbol;
 
@@ -28,4 +30,7 @@ public class Singletons {
     public static final MalSymbol MINUS = MalSymbol.of("-");
     public static final MalSymbol MULTIPLY = MalSymbol.of("*");
     public static final MalSymbol DIVIDE = MalSymbol.of("/");
+
+    public static final MalDefBang DEF_BANG = MalDefBang.instance();
+    public static final MalLetStar LET_STAR = MalLetStar.instance();
 }
