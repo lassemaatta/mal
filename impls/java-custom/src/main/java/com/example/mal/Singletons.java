@@ -23,4 +23,9 @@ public class Singletons {
     public static final MalSymbol SPLICE_UNQUOTE = MalSymbol.of("splice-unquote");
     public static final MalSymbol DEREF = MalSymbol.of("deref");
     public static final MalSymbol WITH_META = MalSymbol.of("with-meta");
+
+    public static final MalSymbol PLUS = MalSymbol.of("+");
+    public static final MalSymbol MINUS = MalSymbol.of("-");
+    public static final MalSymbol MULTIPLY = MalSymbol.of("*");
+    public static final MalSymbol DIVIDE = MalSymbol.of("/");
 }

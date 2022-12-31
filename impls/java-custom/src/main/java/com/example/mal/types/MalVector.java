@@ -3,6 +3,7 @@ package com.example.mal.types;
 import java.util.function.Function;
 
 import com.example.mal.Reader;
+import com.example.mal.env.Environment;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -29,6 +30,12 @@ public abstract class MalVector extends MalCollection<Vector<MalType>> {
         return super.pr(START_TOKEN,
                         END_TOKEN);
     }
+
+    @Override
+    public MalType eval(final Environment env) {
+        return super.eval(env, ImmutableMalVector.builder());
+    }
+
 
     public static boolean matches(final Reader r) {
         return r.peek()

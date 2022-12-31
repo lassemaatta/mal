@@ -25,6 +25,27 @@ public abstract class MalInteger implements MalType {
         return number().toString();
     }
 
+    public MalInteger add(final MalInteger other) {
+        return of(number().add(other.number()));
+    }
+
+    public MalInteger subtract(final MalInteger other) {
+        return of(number().subtract(other.number()));
+    }
+
+    public MalInteger multiply(final MalInteger other) {
+        return of(number().multiply(other.number()));
+    }
+
+    public MalInteger divide(final MalInteger other) {
+        return of(number().divide(other.number()));
+    }
+
+    public static MalInteger negate(final MalInteger i) {
+        return of(i.number()
+                   .negate());
+    }
+
     public static boolean matches(final Reader r) {
         return r.peek()
                 .map(token -> PATTERN.matcher(token)

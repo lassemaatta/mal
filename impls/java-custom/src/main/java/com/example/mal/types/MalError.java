@@ -14,7 +14,7 @@ public interface MalError extends MalType {
         throw new IllegalStateException();
     }
 
-    static MalType of(final String message) {
+    static MalError of(final String message) {
         return ImmutableMalError.builder()
                                 .message(message)
                                 .build();

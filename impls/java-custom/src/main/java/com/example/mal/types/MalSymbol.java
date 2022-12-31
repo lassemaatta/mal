@@ -4,6 +4,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
+import com.example.mal.env.Environment;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -23,6 +24,13 @@ public abstract class MalSymbol implements MalType {
     @Lazy
     public String pr() {
         return name();
+    }
+
+    @Override
+    public MalType eval(final Environment env) {
+        return env.lookupValue(this)
+                  .getOrElse(MalError.of(String.format("Value for '%s' not found",
+                                                       name())));
     }
 
     public static boolean matches(final Reader r) {
