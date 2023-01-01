@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.example.mal.env.DynamicEnvironment;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 import com.example.mal.env.Functions;
 import com.example.mal.types.MalError;
 import com.example.mal.types.MalFn;
@@ -20,8 +21,6 @@ import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
-import io.vavr.Tuple2;
-
 public class step3_env {
 
     private static final String PROMPT = "user> ";
@@ -32,8 +31,9 @@ public class step3_env {
         return read_str(input);
     }
 
-    public static Tuple2<Environment, MalType> EVAL(final MalType input, final Environment env) {
-        return input.rootEval(env);
+    public static EvalContext EVAL(final MalType input, final Environment env) {
+        return MalType.evalWithTco(input,
+                                   env);
     }
 
     public static String PRINT(final MalType input) {
@@ -49,14 +49,16 @@ public class step3_env {
             return String.format("MAL READ ERROR: '%s'",
                                  error.message());
         }
-        final Tuple2<Environment, MalType> result = EVAL(ast,
-                                                         ENV.get());
-        if (result._2() instanceof MalError error) {
+        final EvalContext ctx = EVAL(ast,
+                                     ENV.get());
+        if (ctx.result() instanceof MalError error) {
             return String.format("MAL EVAL ERROR: '%s'",
                                  error.message());
         }
-        ENV.set(result._1());
-        return PRINT(result._2());
+        ctx.environment()
+           .forEach(env -> ENV.set(env.clearLocals()));
+
+        return PRINT(ctx.result());
     }
 
     public static void LOOP() throws IOException {

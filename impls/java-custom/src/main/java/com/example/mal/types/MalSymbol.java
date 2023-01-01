@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -27,10 +28,34 @@ public abstract class MalSymbol implements MalType {
     }
 
     @Override
-    public MalType eval(final Environment env) {
+    public EvalContext eval(final Environment env) {
         return env.lookupValue(this)
-                  .getOrElse(MalError.of(String.format("Value for '%s' not found",
-                                                       name())));
+                  .map(val -> EvalContext.withEnv(val,
+                                                  env))
+                  .getOrElse(EvalContext.error(String.format("Value for '%s' not found",
+                                                             name())));
+    }
+
+    @Override
+    public EvalContext evalList(final MalList ast, final Environment env) {
+        if (ast.entries()
+               .length() == 0) {
+            return EvalContext.error("Cannot invoke empty list");
+        }
+        // This is just a roundabout way of calling eval on ourselves
+        final EvalContext ctx = MalType.evalWithTco(ast.entries()
+                                                       .head(),
+                                                    env);
+        final MalType head = ctx.result();
+        if (head instanceof MalError) {
+            return ctx;
+        }
+
+        // We've only evaluated the head, rest of the list is still un-evaluated
+        // and the evaluated head can decide what to do
+        final MalList newList = ast.replaceHead(head);
+        return head.evalList(newList,
+                             env);
     }
 
     public static boolean matches(final Reader r) {

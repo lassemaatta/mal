@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 import com.google.common.base.Joiner;
 
 import io.vavr.Tuple;
@@ -28,21 +29,25 @@ public abstract class MalCollection<T extends Seq<MalType>> implements MalType {
                 + endToken;
     }
 
-    protected MalType eval(final Environment env, final MalCollection.Builder builder) {
+    protected EvalContext eval(final Environment env, final MalCollection.Builder builder) {
         if (entries().isEmpty()) {
-            return this;
+            return EvalContext.withEnv(this,
+                                       env);
         }
-        final Seq<MalType> evaled = entries().map(e -> e.eval(env))
-                                             .map(e -> (MalType) e);
+        // TODO: all use same env
+        final Seq<MalType> evaled = entries().map(e -> MalType.evalWithTco(e,
+                                                                           env))
+                                             .map(ctx -> ctx.result());
 
         final Option<MalType> error = evaled.find(e -> e instanceof MalError);
 
         if (error.isDefined()) {
-            return error.get();
+            return EvalContext.done(error.get());
         }
 
-        return builder.addAllEntries(evaled)
-                      .build();
+        return EvalContext.withEnv(builder.addAllEntries(evaled)
+                                          .build(),
+                                   env);
     }
 
     public static Tuple2<Reader, MalType> read(Reader r,

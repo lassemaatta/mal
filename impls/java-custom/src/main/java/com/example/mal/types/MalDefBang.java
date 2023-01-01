@@ -5,6 +5,7 @@ import java.util.function.Function;
 import com.example.mal.Reader;
 import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -33,36 +34,39 @@ public abstract class MalDefBang implements MalType {
     }
 
     @Override
-    public MalType eval(final Environment env) {
-        return MalError.of("def! is valid only as the first element of a top-level form!");
+    public EvalContext eval(final Environment env) {
+        return EvalContext.error("def! is valid only as the first element of a top-level form!");
     }
 
-    public static Tuple2<Environment, MalType> evalDefBang(final MalList ast, final Environment env) {
+    @Override
+    public EvalContext evalList(final MalList ast, final Environment env) {
         if (ast.entries()
                .length() != 3) {
-            return Tuple.of(env,
-                            MalError.of(String.format("def! should have 3 elements, got %s",
-                                                      ast.entries()
-                                                         .length())));
+            return EvalContext.error(String.format("def! should have 3 elements, got %s",
+                                                   ast.entries()
+                                                      .length()));
         }
+        // Second form should be a symbol
         final MalType second = ast.entries()
                                   .get(1);
         if (!(second instanceof MalSymbol s)) {
-            return Tuple.of(env,
-                            MalError.of(String.format("Second element of def! should be a, got '%s'",
-                                                      second.pr())));
+            return EvalContext.error(String.format("Second element of def! should be a, got '%s'",
+                                                   second.pr()));
         }
-        final MalType body = ast.entries()
-                                .get(2)
-                                .eval(env);
+        // The third form is evaluated to build the value
+        final EvalContext ctx = MalType.evalWithTco(ast.entries()
+                                                       .get(2),
+                                                    env);
+        final MalType body = ctx.result();
         if (body instanceof MalError err) {
-            return Tuple.of(env,
-                            err);
+            return ctx;
         }
 
-        return Tuple.of(env.set(s,
-                                body),
-                        body);
+        return EvalContext.withEnv(body,
+                                   ctx.environment()
+                                      .getOrElse(env)
+                                      .set(s,
+                                           body));
     }
 
     public static Tuple2<Reader, MalType> read(final Reader r,

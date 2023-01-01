@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -12,7 +13,6 @@ import org.immutables.vavr.encodings.VavrEncodingEnabled;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.Vector;
-import io.vavr.control.Option;
 
 @Value.Immutable
 @VavrEncodingEnabled
@@ -34,8 +34,9 @@ public abstract class MalMap extends MalCollection<Vector<MalType>> {
     }
 
     @Override
-    public MalType eval(final Environment env) {
-        return super.eval(env, ImmutableMalMap.builder());
+    public EvalContext eval(final Environment env) {
+        return super.eval(env,
+                          ImmutableMalMap.builder());
     }
 
     public static boolean matches(final Reader r) {

@@ -5,13 +5,13 @@ import java.util.function.Function;
 import com.example.mal.Reader;
 import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 
@@ -45,8 +45,8 @@ public abstract class MalLetStar implements MalType {
     }
 
     @Override
-    public MalType eval(final Environment env) {
-        return MalError.of("let* is valid only as the first element of a form!");
+    public EvalContext eval(final Environment env) {
+        return EvalContext.error("let* is valid only as the first element of a form!");
     }
 
     private static Either<MalError, Environment> evalAndBind(final Environment env, final Seq<MalType> binding) {
@@ -56,33 +56,37 @@ public abstract class MalLetStar implements MalType {
                                                                 .pr())));
         }
 
-        final MalType body = binding.get(1)
-                                    .eval(env);
-        if (body instanceof MalError err) {
+        final EvalContext ctx = MalType.evalWithTco(binding.get(1),
+                                                    env);
+        if (ctx.result() instanceof MalError err) {
             return Either.left(err);
         }
-        return Either.right(env.set(s,
-                                    body));
+
+        return Either.right(ctx.environment()
+                               .getOrElse(env)
+                               .setLocal(s,
+                                         ctx.result()));
     }
 
-    public static MalType evalLetStar(final MalList ast, final Environment env) {
+    @Override
+    public EvalContext evalList(final MalList ast, final Environment env) {
         if (ast.entries()
                .length() != 3) {
-            return MalError.of(String.format("let* should have 3 elements, got %s",
-                                             ast.entries()
-                                                .length()));
+            return EvalContext.error(String.format("let* should have 3 elements, got %s",
+                                                   ast.entries()
+                                                      .length()));
         }
         final MalType second = ast.entries()
                                   .get(1);
         if (!(second instanceof MalCollection<?> bindings)) {
-            return MalError.of(String.format("Second element of let* should be a list or vector, got '%s'",
-                                             second.pr()));
+            return EvalContext.error(String.format("Second element of let* should be a list or vector, got '%s'",
+                                                   second.pr()));
         }
         final int bindingCount = bindings.entries()
                                          .length();
         if (bindingCount % 2 != 0 || bindingCount == 0) {
-            return MalError.of(String.format("Second element of let* should have an even number of bindings, got '%s'",
-                                             bindings.pr()));
+            return EvalContext.error(String.format("Second element of let* should have an even number of bindings, got '%s'",
+                                                   bindings.pr()));
         }
 
         final Either<MalError, Environment> newEnvEith = bindings.entries()
@@ -93,14 +97,14 @@ public abstract class MalLetStar implements MalType {
                                                                             binding) -> currentEnvEith.flatMap(currentEnv -> evalAndBind(currentEnv,
                                                                                                                                          binding)));
 
+        // Evaluating the bindings caused an error
         if (newEnvEith.isLeft()) {
-            return newEnvEith.getLeft();
+            return EvalContext.done(newEnvEith.getLeft());
         }
 
-        return newEnvEith.map(newEnv -> ast.entries()
-                                           .get(2)
-                                           .eval(newEnv))
+        return newEnvEith.map(newEnv -> EvalContext.reEval(ast.entries()
+                                                              .get(2),
+                                                           newEnv))
                          .get();
-
     }
 }

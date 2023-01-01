@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -32,10 +33,10 @@ public abstract class MalVector extends MalCollection<Vector<MalType>> {
     }
 
     @Override
-    public MalType eval(final Environment env) {
-        return super.eval(env, ImmutableMalVector.builder());
+    public EvalContext eval(final Environment env) {
+        return super.eval(env,
+                          ImmutableMalVector.builder());
     }
-
 
     public static boolean matches(final Reader r) {
         return r.peek()

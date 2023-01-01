@@ -33,4 +33,14 @@ public class RootEnv implements Environment {
     public Environment set(MalSymbol symbol, MalType value) {
         throw new IllegalStateException();
     }
+
+    @Override
+    public Environment setLocal(final MalSymbol symbol, final MalType value) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public Environment clearLocals() {
+        throw new IllegalStateException();
+    }
 }

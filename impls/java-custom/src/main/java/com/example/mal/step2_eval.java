@@ -26,7 +26,8 @@ public class step2_eval {
     }
 
     public static MalType EVAL(final MalType input, final Environment env) {
-        return input.eval(env);
+        return input.eval(env)
+                    .result();
     }
 
     public static String PRINT(final MalType input) {

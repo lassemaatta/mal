@@ -3,17 +3,15 @@ package com.example.mal.types;
 import java.util.function.Function;
 
 import com.example.mal.Reader;
-import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
+import com.example.mal.env.EvalContext;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
 import org.immutables.vavr.encodings.VavrEncodingEnabled;
 
-import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import io.vavr.control.Option;
 
 @Value.Immutable
 @VavrEncodingEnabled
@@ -35,50 +33,17 @@ public abstract class MalList extends MalCollection<List<MalType>> {
     }
 
     @Override
-    public Tuple2<Environment, MalType> rootEval(final Environment env) {
-        if (entries().headOption()
-                     .map(head -> Singletons.DEF_BANG == head)
-                     .getOrElse(false)) {
-            return MalDefBang.evalDefBang(this,
-                                          env);
-        }
-        return Tuple.of(env,
-                        eval(env));
-    }
-
-    @Override
-    public MalType eval(final Environment env) {
+    public EvalContext eval(final Environment env) {
         if (entries().isEmpty()) {
-            return this;
-        }
-        if (Singletons.LET_STAR == entries().head()) {
-            return MalLetStar.evalLetStar(this,
-                                          env);
-        }
-        // Just a normal IFn invocation
-        return evalList(env);
-    }
-
-    private MalType evalList(final Environment env) {
-        if (entries().isEmpty()) {
-            return this;
-        }
-        final List<MalType> evaled = entries().map(e -> e.eval(env));
-
-        final Option<MalType> error = evaled.find(e -> e instanceof MalError);
-
-        if (error.isDefined()) {
-            return error.get();
+            return EvalContext.withEnv(this,
+                                       env);
         }
 
-        final MalType head = evaled.head();
-        final MalList tail = ofIterable(evaled.tail());
+        final MalType head = entries().head();
 
-        if (head instanceof MalFn f) {
-            return f.apply(tail);
-        }
-        return MalError.of(String.format("Not a function: '%s'",
-                                         head.pr()));
+        // Let the list head decide what actually happens
+        return head.evalList(this,
+                             env);
     }
 
     public static MalList of(final MalType... entries) {
@@ -91,6 +56,13 @@ public abstract class MalList extends MalCollection<List<MalType>> {
         return ImmutableMalList.builder()
                                .addAllEntries(entries)
                                .build();
+    }
+
+    public MalList replaceHead(final MalType newHead) {
+        return ImmutableMalList.copyOf(this)
+                               .withEntries(List.<MalType>empty()
+                                                .append(newHead)
+                                                .appendAll(entries().pop()));
     }
 
     public static boolean matches(final Reader r) {
