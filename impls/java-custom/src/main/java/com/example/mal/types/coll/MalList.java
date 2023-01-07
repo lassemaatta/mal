@@ -16,7 +16,7 @@ import io.vavr.collection.List;
 
 @Value.Immutable
 @VavrEncodingEnabled
-public abstract class MalList extends MalCollection<List<MalType>> {
+public abstract class MalList extends MalSequential<List<MalType>> {
 
     private static final Character START_TOKEN = '(';
     private static final Character END_TOKEN = ')';

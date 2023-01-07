@@ -9,8 +9,8 @@ import com.example.mal.env.EvalContext;
 import com.example.mal.types.MalError;
 import com.example.mal.types.MalType;
 import com.example.mal.types.atoms.MalSymbol;
-import com.example.mal.types.coll.MalCollection;
 import com.example.mal.types.coll.MalList;
+import com.example.mal.types.coll.MalSequential;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
@@ -83,7 +83,7 @@ public abstract class MalLetStar implements MalType {
         }
         final MalType second = ast.entries()
                                   .get(1);
-        if (!(second instanceof MalCollection<?> bindings)) {
+        if (!(second instanceof MalSequential<?> bindings)) {
             return EvalContext.error(String.format("Second element of let* should be a list or vector, got '%s'",
                                                    second.pr()));
         }
