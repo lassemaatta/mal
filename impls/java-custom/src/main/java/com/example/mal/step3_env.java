@@ -10,7 +10,6 @@ import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
 import com.example.mal.env.Functions;
 import com.example.mal.types.MalError;
-import com.example.mal.types.MalFn;
 import com.example.mal.types.MalType;
 
 import org.jline.reader.EndOfFileException;
@@ -74,17 +73,13 @@ public class step3_env {
 
         // Populate the initial environment
         ENV.updateAndGet(e -> e.set(Singletons.PLUS,
-                                    MalFn.of("+",
-                                             Functions::plus))
+                                    Functions.PLUS)
                                .set(Singletons.MINUS,
-                                    MalFn.of("-",
-                                             Functions::minus))
+                                    Functions.MINUS)
                                .set(Singletons.MULTIPLY,
-                                    MalFn.of("*",
-                                             Functions::multiply))
+                                    Functions.MULTIPLY)
                                .set(Singletons.DIVIDE,
-                                    MalFn.of("/",
-                                             Functions::divide)));
+                                    Functions.DIVIDE));
 
         while (true) {
             try {

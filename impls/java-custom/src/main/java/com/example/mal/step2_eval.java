@@ -4,8 +4,9 @@ import static com.example.mal.reader.read_str;
 
 import java.io.IOException;
 
+import com.example.mal.env.DynamicEnvironment;
 import com.example.mal.env.Environment;
-import com.example.mal.env.RootEnv;
+import com.example.mal.env.Functions;
 import com.example.mal.types.MalError;
 import com.example.mal.types.MalType;
 
@@ -20,6 +21,16 @@ import org.jline.terminal.TerminalBuilder;
 public class step2_eval {
 
     private static final String PROMPT = "user> ";
+
+    private static final Environment ENV = DynamicEnvironment.empty()
+                                                             .set(Singletons.PLUS,
+                                                                  Functions.PLUS)
+                                                             .set(Singletons.MINUS,
+                                                                  Functions.MINUS)
+                                                             .set(Singletons.MULTIPLY,
+                                                                  Functions.MULTIPLY)
+                                                             .set(Singletons.DIVIDE,
+                                                                  Functions.DIVIDE);
 
     public static MalType READ(final String input) {
         return read_str(input);
@@ -44,7 +55,7 @@ public class step2_eval {
                                  error.message());
         }
         final MalType result = EVAL(ast,
-                                    RootEnv.ROOT_ENV);
+                                    ENV);
         if (result instanceof MalError error) {
             return String.format("MAL EVAL ERROR: '%s'",
                                  error.message());
