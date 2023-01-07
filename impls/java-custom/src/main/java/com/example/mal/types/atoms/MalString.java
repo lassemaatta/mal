@@ -34,7 +34,7 @@ public abstract class MalString implements MalType {
                 .getOrElse(false);
     }
 
-    private static MalString of(final String token) {
+    public static MalString of(final String token) {
         return ImmutableMalString.builder()
                                  .content(token)
                                  .build();

@@ -1,12 +1,22 @@
 package com.example.mal.types;
 
+import com.example.mal.env.DynamicEnvironment;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
+import com.example.mal.env.ImmutableDynamicEnvironment;
+import com.example.mal.env.ImmutableEvalContext;
 import com.example.mal.types.coll.MalList;
+
+import org.immutables.value.Value.Lazy;
 
 public interface MalType {
 
     String pr();
+
+    @Lazy
+    default boolean isTruthy() {
+        return true;
+    }
 
     /**
      * Evaluate a list where `this` is the head (e.g. `(let* ..)`, `(some-fn ..)`)
@@ -49,11 +59,15 @@ public interface MalType {
         Environment currentEnv = env;
         do {
             currentCtx = currentForm.eval(currentEnv);
+            // what should we return (or evaluate next)
             currentForm = currentCtx.result();
+            // and with what environment
             currentEnv = currentCtx.environment()
                                    .getOrElse(currentEnv);
         } while (currentCtx.reEval());
 
-        return currentCtx;
+        return ImmutableEvalContext.copyOf(currentCtx)
+                                   .withEnvironment(ImmutableDynamicEnvironment.copyOf((DynamicEnvironment) currentEnv)
+                                                                               .withLocals(((DynamicEnvironment) env).locals()));
     }
 }

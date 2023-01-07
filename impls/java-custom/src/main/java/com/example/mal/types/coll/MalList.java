@@ -5,6 +5,7 @@ import java.util.function.Function;
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
+import com.example.mal.types.MalError;
 import com.example.mal.types.MalType;
 
 import org.immutables.value.Value;
@@ -44,6 +45,27 @@ public abstract class MalList extends MalSequential<List<MalType>> {
 
         // Let the list head decide what actually happens
         return head.evalList(this,
+                             env);
+    }
+
+    @Override
+    public EvalContext evalList(final MalList ast, final Environment env) {
+        // We're evaluating a form where the head is a list,
+        // e.g. `((fn* (a b) (+ b a)) 1 2)`
+
+        // This is just a roundabout way of calling eval on ourselves (the head list)
+        final EvalContext ctx = MalType.evalWithTco(ast.entries()
+                                                       .head(),
+                                                    env);
+        final MalType head = ctx.result();
+        if (head instanceof MalError) {
+            return ctx;
+        }
+
+        // We've only evaluated the head, rest of the list is still un-evaluated
+        // and the evaluated head can decide what to do
+        final MalList newList = ast.replaceHead(head);
+        return head.evalList(newList,
                              env);
     }
 

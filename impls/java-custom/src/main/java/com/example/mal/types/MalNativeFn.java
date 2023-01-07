@@ -30,6 +30,12 @@ public abstract class MalNativeFn extends MalFn {
 
     @Override
     public EvalContext evalList(final MalList ast, final Environment env) {
+
+        // System.out.println(String.format("Native: %s",
+        // ast.pr()));
+
+        // System.out.println(env);
+
         // Evaluate the function arguments
         final Either<MalError, ListEvalCtx> res = ListUtils.evalEach(env,
                                                                      ast.entries()

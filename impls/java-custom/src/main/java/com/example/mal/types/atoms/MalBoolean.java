@@ -25,6 +25,11 @@ public abstract class MalBoolean implements MalType {
         return value() ? TRUE : FALSE;
     }
 
+    @Override
+    public boolean isTruthy() {
+        return value();
+    }
+
     public static boolean matches(final Reader r) {
         return r.peek()
                 .map(token -> TRUE.equalsIgnoreCase(token) || FALSE.equalsIgnoreCase(token))

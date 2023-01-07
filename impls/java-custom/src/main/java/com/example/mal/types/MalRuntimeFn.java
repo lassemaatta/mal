@@ -39,6 +39,12 @@ public abstract class MalRuntimeFn extends MalFn {
 
     @Override
     public EvalContext evalList(final MalList ast, final Environment env) {
+
+        // System.out.println(String.format("Runtime: %s",
+        // ast.pr()));
+
+        // System.out.println(env);
+
         // Evaluate the function arguments
         final Either<MalError, ListEvalCtx> res = ListUtils.evalEach(env,
                                                                      ast.entries()
@@ -51,6 +57,12 @@ public abstract class MalRuntimeFn extends MalFn {
                                       .arguments();
         final Environment newEnv = res.get()
                                       .environment();
+
+        // It would make sense to clear the locals from `newEnv` so that
+        // the function environment only contains the global symbols and
+        // the arguments. However, MAL seems to favor dynamic binding instead
+        // of lexical binding (e.g. `(let* (f (fn* () x) x 3) (f))`) so
+        // let's not clear the locals here
 
         final Vector<MalSymbol> first = binds().firstArgs();
         final Option<MalSymbol> rest = binds().restArg();

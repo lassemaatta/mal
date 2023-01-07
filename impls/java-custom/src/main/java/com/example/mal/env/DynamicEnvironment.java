@@ -13,9 +13,9 @@ import io.vavr.control.Option;
 @VavrEncodingEnabled
 public abstract class DynamicEnvironment implements Environment {
 
-    protected abstract HashMap<MalSymbol, MalType> values();
+    public abstract HashMap<MalSymbol, MalType> values();
 
-    protected abstract HashMap<MalSymbol, MalType> locals();
+    public abstract HashMap<MalSymbol, MalType> locals();
 
     @Override
     public Option<MalType> lookupValue(final MalSymbol symbol) {
@@ -48,5 +48,32 @@ public abstract class DynamicEnvironment implements Environment {
                                           .values(HashMap.empty())
                                           .locals(HashMap.empty())
                                           .build();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("---------------\n");
+        values().forEach(v -> {
+            sb.append("  ")
+              .append(v._1()
+                       .pr())
+              .append("\t\t")
+              .append(v._2.pr())
+              .append("\n");
+        });
+
+        locals().forEach(v -> {
+            sb.append("L ")
+              .append(v._1()
+                       .pr())
+              .append("\t\t")
+              .append(v._2.pr())
+              .append("\n");
+        });
+        sb.append("---------------\n");
+
+        return sb.toString();
     }
 }

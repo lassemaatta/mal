@@ -8,6 +8,7 @@ import com.example.mal.types.MalType;
 import org.immutables.value.Value;
 
 import io.vavr.collection.List;
+import io.vavr.collection.Traversable;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 
@@ -60,7 +61,8 @@ public class ListUtils {
      * @return List of evaluated forms and the resulting environment, or an error
      *         form
      */
-    public static Either<MalError, ListEvalCtx> evalEach(final Environment initialEnv, final List<MalType> entries) {
+    public static Either<MalError, ListEvalCtx> evalEach(final Environment initialEnv,
+                                                         final Traversable<MalType> entries) {
         return entries.foldLeft(Either.right(ListEvalCtx.empty(initialEnv)),
                                 (currentCtxEither,
                                  entry) -> currentCtxEither.flatMap(currentCtx -> evalEntry(currentCtx,

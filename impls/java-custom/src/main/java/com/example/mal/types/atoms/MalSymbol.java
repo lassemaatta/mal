@@ -4,7 +4,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
-import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
 import com.example.mal.types.MalError;

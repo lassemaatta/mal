@@ -22,6 +22,11 @@ public abstract class MalNil implements MalType {
         return NIL;
     }
 
+    @Override
+    public boolean isTruthy() {
+        return false;
+    }
+
     public static boolean matches(final Reader r) {
         return r.peek()
                 .map(token -> NIL.equalsIgnoreCase(token))
