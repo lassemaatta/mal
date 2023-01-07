@@ -2,12 +2,12 @@
 package com.example.mal;
 
 import com.example.mal.types.ImmutableMalContinue;
-import com.example.mal.types.MalBoolean;
 import com.example.mal.types.MalContinue;
-import com.example.mal.types.MalDefBang;
-import com.example.mal.types.MalLetStar;
-import com.example.mal.types.MalNil;
-import com.example.mal.types.MalSymbol;
+import com.example.mal.types.atoms.MalBoolean;
+import com.example.mal.types.atoms.MalNil;
+import com.example.mal.types.atoms.MalSymbol;
+import com.example.mal.types.specials.MalDefBang;
+import com.example.mal.types.specials.MalLetStar;
 
 public class Singletons {
 

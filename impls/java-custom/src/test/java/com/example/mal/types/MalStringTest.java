@@ -3,6 +3,8 @@ package com.example.mal.types;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.mal.types.atoms.MalString;
+
 import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;

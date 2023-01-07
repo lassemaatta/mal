@@ -1,9 +1,12 @@
-package com.example.mal.types;
+package com.example.mal.types.reader_macros;
 
 import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.Singletons;
+import com.example.mal.types.MalError;
+import com.example.mal.types.MalType;
+import com.example.mal.types.coll.MalList;
 
 import org.immutables.value.Value;
 

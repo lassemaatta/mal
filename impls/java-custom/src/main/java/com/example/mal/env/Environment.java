@@ -1,7 +1,7 @@
 package com.example.mal.env;
 
-import com.example.mal.types.MalSymbol;
 import com.example.mal.types.MalType;
+import com.example.mal.types.atoms.MalSymbol;
 
 import io.vavr.control.Option;
 

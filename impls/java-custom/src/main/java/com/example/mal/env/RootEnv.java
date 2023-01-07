@@ -2,8 +2,8 @@ package com.example.mal.env;
 
 import com.example.mal.Singletons;
 import com.example.mal.types.MalFn;
-import com.example.mal.types.MalSymbol;
 import com.example.mal.types.MalType;
+import com.example.mal.types.atoms.MalSymbol;
 
 import io.vavr.collection.HashMap;
 import io.vavr.control.Option;

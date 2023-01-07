@@ -2,13 +2,14 @@ package com.example.mal.types;
 
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
-import com.example.mal.types.ListUtils.ListEvalCtx;
+import com.example.mal.types.coll.ListUtils;
+import com.example.mal.types.coll.ListUtils.ListEvalCtx;
+import com.example.mal.types.coll.MalList;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
 import org.immutables.vavr.encodings.VavrEncodingEnabled;
 
-import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;

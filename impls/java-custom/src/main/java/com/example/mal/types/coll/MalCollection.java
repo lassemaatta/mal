@@ -1,10 +1,12 @@
-package com.example.mal.types;
+package com.example.mal.types.coll;
 
 import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
+import com.example.mal.types.MalError;
+import com.example.mal.types.MalType;
 import com.google.common.base.Joiner;
 
 import io.vavr.Tuple;
@@ -13,7 +15,7 @@ import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 
 public abstract class MalCollection<T extends Seq<MalType>> implements MalType {
-    protected abstract T entries();
+    public abstract T entries();
 
     interface Builder {
         Builder addEntries(MalType type);

@@ -1,10 +1,12 @@
-package com.example.mal.types;
+package com.example.mal.types.atoms;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
+import com.example.mal.types.MalError;
+import com.example.mal.types.MalType;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.function.BiFunction;
 
 import com.example.mal.types.MalError;
-import com.example.mal.types.MalInteger;
 import com.example.mal.types.MalType;
+import com.example.mal.types.atoms.MalInteger;
 
 import io.vavr.collection.List;
 

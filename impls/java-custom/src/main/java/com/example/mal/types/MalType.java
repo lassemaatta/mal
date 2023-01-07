@@ -2,6 +2,7 @@ package com.example.mal.types;
 
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
+import com.example.mal.types.coll.MalList;
 
 public interface MalType {
 

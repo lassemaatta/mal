@@ -1,10 +1,12 @@
-package com.example.mal.types;
+package com.example.mal.types.coll;
 
 import java.util.function.Function;
 
 import com.example.mal.Reader;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
+import com.example.mal.types.MalError;
+import com.example.mal.types.MalType;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Lazy;
