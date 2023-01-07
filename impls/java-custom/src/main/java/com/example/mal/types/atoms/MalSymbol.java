@@ -4,6 +4,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
+import com.example.mal.Singletons;
 import com.example.mal.env.Environment;
 import com.example.mal.env.EvalContext;
 import com.example.mal.types.MalError;
@@ -20,7 +21,7 @@ import io.vavr.Tuple2;
 public abstract class MalSymbol implements MalType {
 
     private static final Pattern PATTERN =
-            Pattern.compile("[\\p{Alpha}\\*\\+\\!\\-_'\\?\\<\\>=/]+[\\p{Alnum}\\*\\+\\!\\-_'\\?\\<\\>=/]*");
+            Pattern.compile("[\\p{Alpha}\\*\\+\\!\\-_'\\?\\<\\>=/&]+[\\p{Alnum}\\*\\+\\!\\-_'\\?\\<\\>=/&]*");
 
     public abstract String name();
 
@@ -74,11 +75,15 @@ public abstract class MalSymbol implements MalType {
                                  .build();
     }
 
+    public static MalSymbol read(final String token) {
+        return of(token);
+    }
+
     public static Tuple2<Reader, MalType> read(final Reader r,
                                                final Function<Reader, Tuple2<Reader, MalType>> formReader) {
         return r.peek()
                 .map(token -> Tuple.of(r.next(),
-                                       (MalType) of(token)))
+                                       (MalType) read(token)))
                 .getOrElse(Tuple.of(r,
                                     MalError.of("Failed to read symbol")));
     }

@@ -21,6 +21,7 @@ import com.example.mal.types.reader_macros.MalQuote;
 import com.example.mal.types.reader_macros.MalSpliceUnquote;
 import com.example.mal.types.reader_macros.MalUnquote;
 import com.example.mal.types.specials.MalDefBang;
+import com.example.mal.types.specials.MalFnStar;
 import com.example.mal.types.specials.MalLetStar;
 
 import io.vavr.Tuple;
@@ -57,6 +58,8 @@ public class reader {
                              MalLetStar::read),
                     Tuple.of(MalDefBang::matches,
                              MalDefBang::read),
+                    Tuple.of(MalFnStar::matches,
+                             MalFnStar::read),
                     // Atoms
                     Tuple.of(MalNil::matches,
                              MalNil::read),
