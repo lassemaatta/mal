@@ -90,9 +90,20 @@ public class step4_if_fn_do {
                                     Functions.COUNT)
                                .set(Singletons.PRN,
                                     Functions.makePrn(terminal.writer()))
+                               .set(Singletons.PRINTLN,
+                                    Functions.makePrintln(terminal.writer()))
+                               .set(Singletons.STR,
+                                    Functions.STR)
                                .set(Singletons.EQ,
-                                    Functions.EQ));
-
+                                    Functions.EQ)
+                               .set(Singletons.LT,
+                                    Functions.LT)
+                               .set(Singletons.LT_EQ,
+                                    Functions.LT_EQ)
+                               .set(Singletons.GT,
+                                    Functions.GT)
+                               .set(Singletons.GT_EQ,
+                                    Functions.GT_EQ));
         while (true) {
             try {
 

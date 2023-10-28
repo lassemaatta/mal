@@ -10,8 +10,10 @@ import com.example.mal.types.MalNativeFn;
 import com.example.mal.types.MalType;
 import com.example.mal.types.atoms.MalBoolean;
 import com.example.mal.types.atoms.MalInteger;
+import com.example.mal.types.atoms.MalString;
 import com.example.mal.types.coll.MalCollection;
 import com.example.mal.types.coll.MalList;
+import com.google.common.base.Joiner;
 
 import io.vavr.collection.List;
 
@@ -63,15 +65,6 @@ public class Functions {
                                                                              MalInteger::divide);
                                                         });
 
-    private static MalType calculate(final List<MalType> args, final BiFunction<MalInteger, MalInteger, MalInteger> f) {
-        if (args.find(entry -> !(entry instanceof MalInteger))
-                .isDefined()) {
-            return MalError.of("Not an integer");
-        }
-        return args.map(entry -> (MalInteger) entry)
-                   .reduce(f);
-    }
-
     public static final MalType LIST = MalNativeFn.of("list",
                                                       args -> MalList.ofIterable(args));
 
@@ -102,19 +95,83 @@ public class Functions {
     public static MalType makePrn(final PrintWriter writer) {
         return MalNativeFn.of("prn",
                               args -> {
-                                  args.headOption()
-                                      .map(head -> head.pr())
-                                      .forEach(str -> writer.write(str));
+                                  writer.write(Joiner.on(" ")
+                                                     .join(args.map(e -> e.pr()))
+                                          + "\n");
+
                                   return Singletons.NIL;
                               });
     }
 
-    public static final MalType EQ = MalNativeFn.of("=",
-                                                    args -> MalBoolean.of(args.sliding(2,
-                                                                                       1)
-                                                                              .map(pair -> pair.get(0)
-                                                                                               .equals(pair.get(1)))
-                                                                              .foldLeft(true,
-                                                                                        (acc, eq) -> acc && eq)));
+    public static MalType makePrintln(final PrintWriter writer) {
+        return MalNativeFn.of("prn",
+                              args -> {
+                                  writer.write(Joiner.on(" ")
+                                                     .join(args.map(e -> e.pr()))
+                                          + "\n");
 
+                                  return Singletons.NIL;
+                              });
+    }
+
+    public static final MalType STR = MalNativeFn.of("str",
+                                                     args -> MalString.of(Joiner.on("")
+                                                                                .join(args.map(e -> e.pr()))));
+
+    public static final MalType EQ = MalNativeFn.of("=",
+                                                    args -> {
+                                                        if (args.length() == 1) {
+                                                            return Singletons.TRUE;
+                                                        }
+                                                        return args.sliding(2,
+                                                                            1)
+                                                                   .map(pair -> pair.get(0)
+                                                                                    .equals(pair.get(1)))
+                                                                   .foldLeft(true,
+                                                                             (acc, eq) -> acc && eq) ? Singletons.TRUE
+                                                                                     : Singletons.FALSE;
+                                                    });
+
+    public static final MalType LT = MalNativeFn.of("<",
+                                                    args -> calculateBool(args,
+                                                                          MalInteger::lessThan));
+
+    public static final MalType LT_EQ = MalNativeFn.of("<=",
+                                                       args -> calculateBool(args,
+                                                                             MalInteger::lessThanOrEqual));
+
+    public static final MalType GT = MalNativeFn.of(">",
+                                                    args -> calculateBool(args,
+                                                                          MalInteger::greaterThan));
+
+    public static final MalType GT_EQ = MalNativeFn.of(">=",
+                                                       args -> calculateBool(args,
+                                                                             MalInteger::greaterThanOrEqual));
+
+    private static MalType calculate(final List<MalType> args, final BiFunction<MalInteger, MalInteger, MalInteger> f) {
+        if (args.find(entry -> !(entry instanceof MalInteger))
+                .isDefined()) {
+            return MalError.of("Not an integer");
+        }
+        return args.map(entry -> (MalInteger) entry)
+                   .reduce(f);
+    }
+
+    private static MalType calculateBool(final List<MalType> args,
+                                         final BiFunction<MalInteger, MalInteger, MalBoolean> f) {
+        if (args.isEmpty()) {
+            return Singletons.TRUE;
+        }
+        if (args.find(entry -> !(entry instanceof MalInteger))
+                .isDefined()) {
+            return MalError.of("Not an integer");
+        }
+        return args.map(entry -> (MalInteger) entry)
+                   .sliding(2,
+                            1)
+                   .map(pair -> f.apply(pair.get(0),
+                                        pair.get(1)))
+                   .foldLeft(Singletons.TRUE,
+                             (res, val) -> res.and(val));
+    }
 }

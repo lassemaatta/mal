@@ -30,6 +30,14 @@ public abstract class MalBoolean implements MalType {
         return value();
     }
 
+    public MalBoolean and(final MalBoolean other) {
+        return value() && other.value() ? Singletons.TRUE : Singletons.FALSE;
+    }
+
+    public MalBoolean or(final MalBoolean other) {
+        return value() || other.value() ? Singletons.TRUE : Singletons.FALSE;
+    }
+
     public static boolean matches(final Reader r) {
         return r.peek()
                 .map(token -> TRUE.equalsIgnoreCase(token) || FALSE.equalsIgnoreCase(token))

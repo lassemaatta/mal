@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.example.mal.Reader;
+import com.example.mal.Singletons;
 import com.example.mal.types.MalError;
 import com.example.mal.types.MalType;
 
@@ -46,6 +47,22 @@ public abstract class MalInteger implements MalType {
     public static MalInteger negate(final MalInteger i) {
         return of(i.number()
                    .negate());
+    }
+
+    public MalBoolean lessThan(final MalInteger other) {
+        return number().compareTo(other.number()) < 0 ? Singletons.TRUE : Singletons.FALSE;
+    }
+
+    public MalBoolean greaterThan(final MalInteger other) {
+        return number().compareTo(other.number()) > 0 ? Singletons.TRUE : Singletons.FALSE;
+    }
+
+    public MalBoolean lessThanOrEqual(final MalInteger other) {
+        return !(number().compareTo(other.number()) > 0) ? Singletons.TRUE : Singletons.FALSE;
+    }
+
+    public MalBoolean greaterThanOrEqual(final MalInteger other) {
+        return !(number().compareTo(other.number()) < 0) ? Singletons.TRUE : Singletons.FALSE;
     }
 
     public static boolean matches(final Reader r) {

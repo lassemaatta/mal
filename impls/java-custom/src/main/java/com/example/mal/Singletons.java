@@ -40,6 +40,8 @@ public class Singletons {
     public static final MalSymbol MULTIPLY = MalSymbol.of("*");
     public static final MalSymbol DIVIDE = MalSymbol.of("/");
     public static final MalSymbol PRN = MalSymbol.of("prn");
+    public static final MalSymbol PRINTLN = MalSymbol.of("println");
+    public static final MalSymbol STR = MalSymbol.of("str");
     public static final MalSymbol LIST = MalSymbol.of("list");
     public static final MalSymbol LIST_QMARK = MalSymbol.of("list?");
     public static final MalSymbol EMPTY_QMARK = MalSymbol.of("empty?");
